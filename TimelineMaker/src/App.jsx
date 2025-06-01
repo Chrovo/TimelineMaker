@@ -6,27 +6,19 @@ import Footer from './components/Footer'
 const App = () =>(
   <div className="bg-slate-900 w-full overflow-hidden">
     <div>
-      <div>
-        <Navbar/>
-      </div>
+      <Navbar/>
     </div>
 
-    <div className="mt-[140px]">
-      <div>
-        <Hero/>
-      </div>
+    <div className="mt-[170px]">
+      <Hero/>
     </div>
 
-    <div>
-      <div>
-        <Benefits />
-      </div>
+    <div className="mt-[160px]">
+      <Benefits />
     </div>
 
-    <div>
-      <div>
-        <Footer />
-      </div>
+    <div className="mt-[100px]">
+      <Footer />
     </div>
 
   </div>
