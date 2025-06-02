@@ -1,27 +1,20 @@
-import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Benefits from './components/Benefits'
-import Footer from './components/Footer'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from './pages/home';
+import Login from './pages/login';
+import Signup from './pages/signup';
+import Timelines from "./pages/timelines";
 
-const App = () =>(
-  <div className="bg-slate-900 w-full overflow-hidden">
-    <div>
-      <Navbar/>
-    </div>
-
-    <div className="mt-[170px]">
-      <Hero/>
-    </div>
-
-    <div className="mt-[160px]">
-      <Benefits />
-    </div>
-
-    <div className="mt-[100px]">
-      <Footer />
-    </div>
-
-  </div>
-)
+const App = () =>{
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/timelines" element={<Timelines />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
 
 export default App

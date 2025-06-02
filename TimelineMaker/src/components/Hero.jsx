@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Hero = () => (
     <div className="bg-slate-900">
         <div className="flex justify-center items-center font-bold">
@@ -9,8 +11,12 @@ const Hero = () => (
             <p className="text-gray-300 text-[30px] font-thin">History, visualized.</p>
         </div>
         <div className="flex justify-center items-center mt-[35px]">
-            <button className="text-sky-500 bg-white rounded-md py-2 px-4 text-[14px] text-lg my-5 ml-5 shadow-xl ring-1 ring-gray-700">Log In</button>
-            <button className=" text-cyan-300 bg-black border-gray-300 text-[14px] rounded-md py-2 px-4 text-lg my-5 ml-3 mr-10 shadow-xl ring-1 ring-gray-700">Sign Up</button>
+            <button className="text-sky-500 bg-white rounded-md py-2 px-4 text-[14px] text-lg my-5 ml-5 shadow-xl ring-1 ring-gray-700">
+                <Link to="/login">Log In</Link>
+            </button>
+            <button className=" text-cyan-300 bg-black border-gray-300 text-[14px] rounded-md py-2 px-4 text-lg my-5 ml-3 mr-10 shadow-xl ring-1 ring-gray-700">
+                <Link to="/signup">Sign Up</Link>
+            </button>
         </div>
     </div>
 )
