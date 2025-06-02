@@ -4,6 +4,7 @@ import history from "./history.jpg";
 import logo from "./logo.png";
 import money from "./money.png";
 import organized from "./organized.jpg";
+import plus from "./plus.png";
 
 export {
     chrono_logo,
@@ -12,4 +13,5 @@ export {
     logo,
     money,
     organized,
+    plus,
 }

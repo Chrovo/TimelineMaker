@@ -14,7 +14,17 @@ const Login = () => {
         e.preventDefault();
         if(!isSigningIn) {
             setIsSigningIn(true);
-            await doSignInWithEmailAndPassword(email, password);
+            try {
+                await doSignInWithEmailAndPassword(email, password);
+            } catch(err) {
+                if(err.code == "auth/invalid-credential" || err.code == "auth/user-not-found" || err.code == "auth/invalid-password") {
+                    setErrorMessage("Invalid email or password");
+                }
+                else {
+                    setErrorMessage(err.message);
+                }
+                setIsSigningIn(false);
+            }
         }
     }
 
@@ -25,7 +35,15 @@ const Login = () => {
             try {
                 await signInWithGoogle();
             } catch(err) {
-                setErrorMessage(err.message);
+                if(err.code == "auth/popup-closed-by-user") {
+                    setErrorMessage("Sign-in popup closed. Please try again.");
+                }
+                else if(err.code == "auth/popup-blocked") {
+                    setErrorMessage("Allow popups for Google sign-in");
+                }
+                else {
+                    setErrorMessage(err.message);
+                }
                 setIsSigningIn(false);
             }
         }
@@ -40,17 +58,17 @@ const Login = () => {
                         <p className="bg-gradient-to-r from-blue-700 via-sky-500 to-cyan-300  bg-clip-text text-transparent text-[50px] font-semibold">Chrono</p>
                     </div>
                     <div>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-[200px] h-[30px]" placeholder="john.doe@gmail.com" required  />
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-[200px] h-[30px]" placeholder="Email" required  />
                     </div>
                     <div>
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-[200px] h-[30px]" />
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-[200px] h-[30px]" required />
                     </div>
                     {errorMessage && (
                         <p className="text-red-500 text-sm">{errorMessage}</p>
                     )}
                     <div>
                         <button type="submit" className="text-black bg-white  border-gray-300 text-[14px] rounded-md py-2 px-4 text-lg my-5 ml-10 shadow-xl ring-1 ring-gray-700">
-                            Sign Up
+                            Log In
                         </button>
                     </div>
                     <div className="flex justify-center">
