@@ -58,10 +58,10 @@ const Login = () => {
                         <p className="bg-gradient-to-r from-blue-700 via-sky-500 to-cyan-300  bg-clip-text text-transparent text-[50px] font-semibold">Chrono</p>
                     </div>
                     <div>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-[200px] h-[30px]" placeholder="Email" required  />
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-[200px] h-[30px] border rounded-md px-2 py-2" placeholder="Email" required  />
                     </div>
                     <div>
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-[200px] h-[30px]" required />
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-[200px] h-[30px] border rounded-md px-2 py-2" required />
                     </div>
                     {errorMessage && (
                         <p className="text-red-500 text-sm">{errorMessage}</p>

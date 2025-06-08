@@ -3,8 +3,9 @@ import Home from './pages/home';
 import Login from './pages/login';
 import Signup from './pages/signup';
 import Timelines from "./pages/timelines";
+import TimelinePage from "./pages/TimelinePage";
 
-const App = () =>{
+const App = () => {
   return (
     <BrowserRouter>
       <Routes>
@@ -12,6 +13,7 @@ const App = () =>{
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/timelines" element={<Timelines />} />
+        <Route path="/timeline/:timelineId" element={<TimelinePage />} />
       </Routes>
     </BrowserRouter>
   )

@@ -1,14 +1,19 @@
-import { useState } from 'react';
+import { db } from "../firebase/firebase"
+import { collection, query, where, getDocs } from "firebase/firestore"
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../contexts/AuthContext";
 import { signOut } from "../firebase/auth";
 import { plus } from "../assets"
 
 import Box from '../components/Box';
 import Modal from '../components/Modal';
-import { organized } from '../assets'
+import { history } from '../assets'
 
 const Timelines = () => {
   const [IsOpen, setIsOpen] = useState(false);
+  const [timelines, setTimelines] = useState([]);
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   
   const logout = async () => {
@@ -19,6 +24,27 @@ const Timelines = () => {
       console.error("Error logging out: " + err);
     }
   };
+
+  useEffect(() => {
+    if(!currentUser) {
+      return;
+    }
+
+    const getUserTimelines = async () => {
+      if(!currentUser) {
+        return;
+      }
+      const q = query(collection(db, "timelines"), where("userId", "==", currentUser.uid));
+      const querySnapshot = await getDocs(q);
+      const timelines = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setTimelines(timelines);
+    };
+    
+    getUserTimelines();
+  }, [currentUser]);
 
   return (
     <div className="bg-slate-900 flex-row w-screen h-screen">
@@ -35,11 +61,18 @@ const Timelines = () => {
           <img src={plus} className="h-[20px] w-[20px] mt-1 mr-2"/>
           <p>New</p>
         </button>
-        <div className="mt-10">
-          <Box coverImage={organized} timelineName="Vietnam War" lastEdited="Last Edited: Yesterday, 11:32 PM"/>
+        <div className="flex flex-wrap gap-6 mt-10 ml-[50px]">
+          {timelines.map((timeline) => (
+            <Box 
+              key={timeline.id} 
+              coverImage={timeline.coverImage || history} 
+              timelineName={timeline.name} lastEdited={timeline.createdAt?.toDate().toDateString()} 
+              onClick={() => navigate(`/timeline/${timeline.id}`)}
+            />
+          ))}
         </div>
       </div>
-      <Modal open={IsOpen} onClose={() => setIsOpen(false)}>Fancy Modal</Modal>
+      {currentUser && (<Modal userID={currentUser.uid} open={IsOpen} onClose={() => setIsOpen(false)} />)}
     </div>
   )
 }
