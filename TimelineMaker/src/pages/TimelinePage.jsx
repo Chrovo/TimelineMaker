@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { db } from '../firebase/firebase';
 import { collection, addDoc, getDocs } from 'firebase/firestore'
@@ -13,6 +13,31 @@ const TimelinePage = () => {
   const [selectedType, setSelectedType] = useState(null);
   const queryParams = new URLSearchParams(window.location.search);
   const isViewOnly = queryParams.get("view") == "true";
+  const eventTypes = [
+    { name: "Event", color: "rgb(249, 115, 22)", bgClass: "bg-orange-500" },
+    { name: "War", color: "rgb(168, 85, 247)", bgClass: "bg-purple-500" },
+    { name: "Election", color: "rgb(244, 63, 94)", bgClass: "bg-rose-500" },
+    { name: "Movement", color: "rgb(234, 179, 8)", bgClass: "bg-yellow-500" },
+    { name: "Discovery", color: "rgb(59, 130, 246)", bgClass: "bg-blue-500" },
+    { name: "Assassination", color: "rgb(239, 68, 68)", bgClass: "bg-red-500" },
+  ];
+
+  const createDragImage = (eventType) => (e) => {
+    e.dataTransfer.setData("text/plain", eventType.name);
+    
+    const dragImage = document.createElement('div');
+    dragImage.style.width = '25px';
+    dragImage.style.height = '25px';
+    dragImage.style.backgroundColor = eventType.color;
+    dragImage.style.borderRadius = '50%';
+    dragImage.style.opacity = '1';
+    dragImage.style.position = 'absolute';
+    dragImage.style.top = '-1000px';
+    
+    document.body.appendChild(dragImage);
+    e.dataTransfer.setDragImage(dragImage, 8, 8);
+    setTimeout(() => document.body.removeChild(dragImage), 0);
+  };
 
   useEffect(() => {
     const getEvents = async () => {
@@ -99,29 +124,18 @@ const addEvent = async (data) => {
             <div className="mt-4 ml-[70px] font-semibold text-[20px]">Sidebar</div>
             <div className="absolute top-0 right-0 h-full w-[5px] bg-gray-400" />
             <div className="mt-6 space-y-4">
-              <div draggable onDragStart={(e) => e.dataTransfer.setData("text/plain", "Event")} className="flex items-center cursor-pointer">
-                <div className="w-4 h-4 bg-orange-500 rounded-full mr-2"></div>
-                <div>Event</div>
-              </div>
-              <div draggable onDragStart={(e) => e.dataTransfer.setData("text/plain", "War")} className="flex items-center cursor-pointer">
-                <div className="w-4 h-4 bg-purple-500 rounded-full mr-2"></div>
-                <div>War</div>
-              </div>
-              <div draggable onDragStart={(e) => e.dataTransfer.setData("text/plain", "Election")} className="flex items-center cursor-pointer">
-                <div className="w-4 h-4 bg-rose-500 rounded-full mr-2"></div>
-                <div>Election</div>
-              </div>
-              <div draggable onDragStart={(e) => e.dataTransfer.setData("text/plain", "Movement")} className="flex items-center cursor-pointer">
-                <div className="w-4 h-4 bg-yellow-500 rounded-full mr-2"></div>
-                <div>Movement</div>
-              </div>
-              <div draggable onDragStart={(e) => e.dataTransfer.setData("text/plain", "Discovery")} className="flex items-center cursor-pointer">
-                <div className="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
-                <div>Discovery</div>
-              </div>
-              <div draggable onDragStart={(e) => e.dataTransfer.setData("text/plain", "Assassination")} className="flex items-center cursor-pointer">
-                <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
-                <div>Assassination</div>
+              <div className="mt-6 space-y-4">
+                {eventTypes.map((eventType) => (
+                  <div
+                    key={eventType.name}
+                    draggable
+                    onDragStart={createDragImage(eventType)}
+                    className="flex items-center cursor-pointer"
+                  >
+                    <div className={`w-4 h-4 ${eventType.bgClass} rounded-full mr-2`}></div>
+                    <div>{eventType.name}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

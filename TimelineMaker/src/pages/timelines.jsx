@@ -15,7 +15,7 @@ const Timelines = () => {
   const [timelines, setTimelines] = useState([]);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  
+
   const logout = async () => {
     try {
       await signOut();
@@ -42,7 +42,7 @@ const Timelines = () => {
       }));
       setTimelines(timelines);
     };
-    
+
     getUserTimelines();
   }, [currentUser]);
 
