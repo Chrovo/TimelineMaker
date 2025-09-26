@@ -143,15 +143,17 @@ const addEvent = async (data) => {
         <div onDrop={handleDrop} onDragOver={handleDragOver} className="flex-1 bg-white p-6">
           <p className="text-black text-xl font-bold">Timeline ID: {timelineId}</p>
           {!isViewOnly && (<p className="mt-2 text-gray-400">Drop your events here!</p>)}
-          <div className="mt-10 space-y-4">
-            {droppedItems.map((item, i) => (
-              <div key={i} className="p-4 border rounded shadow bg-gray-100">
-                <p className="font-bold">{item.type}</p>
-                <p>{item.text}</p>
-                <p>Event type: {item.type}</p>
-                <p className="text-sm text-gray-600">{item.date}</p>
-              </div>
-            ))}
+          <div className="mt-10 overflow-x-auto">
+            <div className="flex space-x-6 pb-4" style={{ minWidth: 'max-content' }}>
+              {droppedItems.map((item, i) => (
+                <div key={i} className="w-48 p-4 border rounded shadow bg-gray-100 flex-shrink-0">
+                  <p className="font-bold">{item.type}</p>
+                  <p>{item.text}</p>
+                  <p>Event type: {item.type}</p>
+                  <p className="text-sm text-gray-600">{item.date}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
