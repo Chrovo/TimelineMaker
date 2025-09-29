@@ -11,6 +11,9 @@ const TimelinePage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [droppedItems, setDroppedItems] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
+  const [connections, setConnections] = useState([]);
+  const [draggingFrom, setDraggingFrom] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const queryParams = new URLSearchParams(window.location.search);
   const isViewOnly = queryParams.get("view") == "true";
   const eventTypes = [
@@ -98,6 +101,42 @@ const addEvent = async (data) => {
     alert("View-only link copied to clipboard!");
   }
 
+  const handleConnectionStart = (eventId, side) => {
+    setDraggingFrom({ eventId, side });
+  };
+
+  const handleConnectionEnd = (eventId, side) => {
+    if (draggingFrom && draggingFrom.eventId !== eventId) {
+      const newConnection = {
+        from: draggingFrom,
+        to: { eventId, side }
+      };
+      setConnections([...connections, newConnection]);
+    }
+    setDraggingFrom(null);
+  };
+
+  const handleMouseMove = (e) => {
+    if (draggingFrom) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setMousePos({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+    }
+  };
+
+  const getConnectionPoint = (eventId, side) => {
+    const element = document.getElementById(`event-${eventId}-${side}`);
+    if (!element) return { x: 0, y: 0 };
+    const rect = element.getBoundingClientRect();
+    const container = document.getElementById('timeline-container').getBoundingClientRect();
+    return {
+      x: rect.left + rect.width / 2 - container.left,
+      y: rect.top + rect.height / 2 - container.top
+    };
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <div className="bg-white flex justify-between">
@@ -140,13 +179,68 @@ const addEvent = async (data) => {
             </div>
           </div>
         )}
-        <div onDrop={handleDrop} onDragOver={handleDragOver} className="flex-1 bg-white p-6">
+        <div 
+          id="timeline-container"
+          onDrop={handleDrop} 
+          onDragOver={handleDragOver} 
+          onMouseMove={handleMouseMove}
+          onMouseUp={() => setDraggingFrom(null)}
+          className="flex-1 bg-white p-6 relative"
+        >
           <p className="text-black text-xl font-bold">Timeline ID: {timelineId}</p>
           {!isViewOnly && (<p className="mt-2 text-gray-400">Drop your events here!</p>)}
-          <div className="mt-10 overflow-x-auto">
+          
+          {/* SVG for connection lines */}
+          <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+            {/* Draw existing connections */}
+            {connections.map((conn, idx) => {
+              const from = getConnectionPoint(conn.from.eventId, conn.from.side);
+              const to = getConnectionPoint(conn.to.eventId, conn.to.side);
+              const midX = (from.x + to.x) / 2;
+              
+              return (
+                <path
+                  key={idx}
+                  d={`M ${from.x} ${from.y} Q ${midX} ${from.y}, ${midX} ${(from.y + to.y) / 2} T ${to.x} ${to.y}`}
+                  stroke="#3b82f6"
+                  strokeWidth="2"
+                  fill="none"
+                />
+              );
+            })}
+            
+            {/* Draw line being dragged */}
+            {draggingFrom && (
+              <path
+                d={`M ${getConnectionPoint(draggingFrom.eventId, draggingFrom.side).x} ${getConnectionPoint(draggingFrom.eventId, draggingFrom.side).y} Q ${(getConnectionPoint(draggingFrom.eventId, draggingFrom.side).x + mousePos.x) / 2} ${getConnectionPoint(draggingFrom.eventId, draggingFrom.side).y}, ${(getConnectionPoint(draggingFrom.eventId, draggingFrom.side).x + mousePos.x) / 2} ${(getConnectionPoint(draggingFrom.eventId, draggingFrom.side).y + mousePos.y) / 2} T ${mousePos.x} ${mousePos.y}`}
+                stroke="#3b82f6"
+                strokeWidth="2"
+                fill="none"
+                strokeDasharray="5,5"
+              />
+            )}
+          </svg>
+          
+          <div className="mt-10 overflow-x-auto relative" style={{ zIndex: 2 }}>
             <div className="flex space-x-6 pb-4" style={{ minWidth: 'max-content' }}>
               {droppedItems.map((item, i) => (
-                <div key={i} className="w-48 p-4 border rounded shadow bg-gray-100 flex-shrink-0">
+                <div key={i} className="w-48 p-4 border rounded shadow bg-gray-100 flex-shrink-0 relative">
+                  {/* Left connection point */}
+                  <div
+                    id={`event-${i}-left`}
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-blue-500 rounded-full cursor-pointer hover:scale-150 transition-transform z-10"
+                    onMouseDown={() => handleConnectionStart(i, 'left')}
+                    onMouseUp={() => handleConnectionEnd(i, 'left')}
+                  />
+                  
+                  {/* Right connection point */}
+                  <div
+                    id={`event-${i}-right`}
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 w-3 h-3 bg-blue-500 rounded-full cursor-pointer hover:scale-150 transition-transform z-10"
+                    onMouseDown={() => handleConnectionStart(i, 'right')}
+                    onMouseUp={() => handleConnectionEnd(i, 'right')}
+                  />
+                  
                   <p className="font-bold">{item.type}</p>
                   <p>{item.text}</p>
                   <p>Event type: {item.type}</p>
