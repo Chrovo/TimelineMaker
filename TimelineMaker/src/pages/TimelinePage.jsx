@@ -202,7 +202,7 @@ const addEvent = async (data) => {
                 <path
                   key={idx}
                   d={`M ${from.x} ${from.y} Q ${midX} ${from.y}, ${midX} ${(from.y + to.y) / 2} T ${to.x} ${to.y}`}
-                  stroke="#3b82f6"
+                  stroke="#665054"
                   strokeWidth="2"
                   fill="none"
                 />
@@ -213,10 +213,9 @@ const addEvent = async (data) => {
             {draggingFrom && (
               <path
                 d={`M ${getConnectionPoint(draggingFrom.eventId, draggingFrom.side).x} ${getConnectionPoint(draggingFrom.eventId, draggingFrom.side).y} Q ${(getConnectionPoint(draggingFrom.eventId, draggingFrom.side).x + mousePos.x) / 2} ${getConnectionPoint(draggingFrom.eventId, draggingFrom.side).y}, ${(getConnectionPoint(draggingFrom.eventId, draggingFrom.side).x + mousePos.x) / 2} ${(getConnectionPoint(draggingFrom.eventId, draggingFrom.side).y + mousePos.y) / 2} T ${mousePos.x} ${mousePos.y}`}
-                stroke="#3b82f6"
+                stroke="#665054"
                 strokeWidth="2"
                 fill="none"
-                strokeDasharray="5,5"
               />
             )}
           </svg>
@@ -224,11 +223,11 @@ const addEvent = async (data) => {
           <div className="mt-10 overflow-x-auto relative" style={{ zIndex: 2 }}>
             <div className="flex space-x-6 pb-4" style={{ minWidth: 'max-content' }}>
               {droppedItems.map((item, i) => (
-                <div key={i} className="w-48 p-4 border rounded shadow bg-gray-100 flex-shrink-0 relative">
+                <div key={i} className="w-48 p-4 border rounded shadow bg-gray-100 flex-shrink-0 relative select-none">
                   {/* Left connection point */}
                   <div
                     id={`event-${i}-left`}
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-blue-500 rounded-full cursor-pointer hover:scale-150 transition-transform z-10"
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-gray-500 rounded-full cursor-pointer hover:scale-150 transition-transform z-10"
                     onMouseDown={() => handleConnectionStart(i, 'left')}
                     onMouseUp={() => handleConnectionEnd(i, 'left')}
                   />
@@ -236,7 +235,7 @@ const addEvent = async (data) => {
                   {/* Right connection point */}
                   <div
                     id={`event-${i}-right`}
-                    className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 w-3 h-3 bg-blue-500 rounded-full cursor-pointer hover:scale-150 transition-transform z-10"
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 w-3 h-3 bg-gray-500 rounded-full cursor-pointer hover:scale-150 transition-transform z-10"
                     onMouseDown={() => handleConnectionStart(i, 'right')}
                     onMouseUp={() => handleConnectionEnd(i, 'right')}
                   />
