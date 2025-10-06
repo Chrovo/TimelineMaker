@@ -101,12 +101,30 @@ const addEvent = async (data) => {
     alert("View-only link copied to clipboard!");
   }
 
+
+  const isEndpointConnected = (eventId, side) => {
+    return connections.some(conn => 
+      (conn.from.eventId === eventId && conn.from.side === side) || 
+      (conn.to.eventId === eventId && conn.to.side === side)
+    );
+  }
+
+  const removeEndpointConnection = (eventId, side) => {
+    setConnections(connections.filter(conn => 
+      !((conn.from.eventId === eventId && conn.from.side === side) || 
+      (conn.to.eventId === eventId && conn.to.side === side))
+    ));
+  }
+
   const handleConnectionStart = (eventId, side) => {
+    if(isEndpointConnected(eventId, side)) {
+      removeEndpointConnection(eventId, side);
+    }
     setDraggingFrom({ eventId, side });
   };
 
   const handleConnectionEnd = (eventId, side) => {
-    if (draggingFrom && draggingFrom.eventId !== eventId) {
+    if (!isEndpointConnected(eventId, side) && draggingFrom && draggingFrom.eventId !== eventId) {
       const newConnection = {
         from: draggingFrom,
         to: { eventId, side }
