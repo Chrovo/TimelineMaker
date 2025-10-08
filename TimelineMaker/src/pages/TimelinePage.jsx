@@ -13,6 +13,7 @@ const TimelinePage = () => {
   const [selectedType, setSelectedType] = useState(null);
   const [connections, setConnections] = useState([]);
   const [draggingFrom, setDraggingFrom] = useState(null);
+  const [draggingBoxId, setDraggingBoxId] = useState(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const queryParams = new URLSearchParams(window.location.search);
   const isViewOnly = queryParams.get("view") == "true";
@@ -101,6 +102,23 @@ const addEvent = async (data) => {
     alert("View-only link copied to clipboard!");
   }
 
+  const handleBoxMouseDown = (index) => {
+    setDraggingBoxId(index);
+  }
+
+  const handleBoxMouseMove = (e) => {
+    if (draggingBoxId === null) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const updatedItems = [...droppedItems];
+    updatedItems[draggingBoxId] = { ...updatedItems[draggingBoxId], x, y };
+    setDroppedItems(updatedItems);
+  }
+
+  const handleBoxMouseUp = () => {
+    setDraggingBoxId(null);
+  }
 
   const isEndpointConnected = (eventId, side) => {
     return connections.some(conn => 
@@ -178,7 +196,7 @@ const addEvent = async (data) => {
         
         {!isViewOnly && (
             <div className="bg-gray-200 text-black w-[250px] p-4 relative">
-            <div className="mt-4 ml-[70px] font-semibold text-[20px]">Sidebar</div>
+            <div className="mt-4 ml-[70px] font-semibold text-[20px] -translate-x-9 10">Sidebar</div>
             <div className="absolute top-0 right-0 h-full w-[5px] bg-gray-400" />
             <div className="mt-6 space-y-4">
               <div className="mt-6 space-y-4">
@@ -199,7 +217,7 @@ const addEvent = async (data) => {
         )}
         <div 
           id="timeline-container"
-          onDrop={handleDrop} 
+          onDrop={handleDrop}
           onDragOver={handleDragOver} 
           onMouseMove={handleMouseMove}
           onMouseUp={() => setDraggingFrom(null)}
@@ -241,7 +259,7 @@ const addEvent = async (data) => {
           <div className="mt-10 overflow-x-auto relative" style={{ zIndex: 2 }}>
             <div className="flex space-x-6 pb-4" style={{ minWidth: 'max-content' }}>
               {droppedItems.map((item, i) => (
-                <div key={i} className="w-48 p-4 border rounded shadow bg-gray-100 flex-shrink-0 relative select-none">
+                <div key={i} className="w-48 p-4 border rounded shadow bg-gray-100 flex-shrink-0 relative select-none" onMouseDown={handleBoxMouseDown} onMouseMove={handleBoxMouseMove} onMouseUp={handleBoxMouseUp}>
                   {/* Left connection point */}
                   <div
                     id={`event-${i}-left`}
