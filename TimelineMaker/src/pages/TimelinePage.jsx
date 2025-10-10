@@ -256,7 +256,7 @@ const addEvent = async (data) => {
             )}
           </svg>
           
-          <div className="mt-10 overflow-x-auto relative" style={{ zIndex: 2 }}>
+          <div className="mt-10 relative" style={{ zIndex: 2 }}>
             <div className="flex space-x-6 pb-4" style={{ minWidth: 'max-content' }}>
               {droppedItems.map((item, i) => (
                 <div key={i} className="w-48 p-4 border rounded shadow bg-gray-100 flex-shrink-0 relative select-none" onMouseDown={handleBoxMouseDown} onMouseMove={handleBoxMouseMove} onMouseUp={handleBoxMouseUp}>
